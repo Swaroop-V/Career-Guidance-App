@@ -62,11 +62,14 @@ const CollegeSignUp = () => {
         });
 
         // 2. Save College Details to Firestore
+        const location = data.country === 'India' ? 'India' : 'Abroad';
+        
         await setDoc(doc(db, 'colleges', userCredential.user.uid), {
           uid: userCredential.user.uid,
           name: data.collegeName,
           email: data.email,
           country: data.country,
+          location: location,
           role: 'college', // Mark as college role
           details: {
             tuitionFees: data.tuitionFees,

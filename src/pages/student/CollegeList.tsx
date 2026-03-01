@@ -77,7 +77,9 @@ const CollegeList = () => {
     if (!studentProfile) return true; // If no profile, show all
     
     // Filter by Location Preference
-    if (studentProfile.locationPreference && college.location !== studentProfile.locationPreference) {
+    const collegeLocation = college.location || (college.country === 'India' ? 'India' : (college.country ? 'Abroad' : undefined));
+    
+    if (studentProfile.locationPreference && collegeLocation && collegeLocation !== studentProfile.locationPreference) {
       return false;
     }
 
@@ -182,8 +184,9 @@ const CollegeList = () => {
                 <div className="h-32 bg-indigo-600 relative">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                   <div className="absolute bottom-4 left-4 text-white">
-                    <span className="text-xs font-semibold bg-white/20 px-2 py-1 rounded backdrop-blur-sm">
-                      {college.location === 'India' ? '🇮🇳 India' : '🌍 Abroad'}
+                    <span className="text-xs font-semibold bg-white/20 px-2 py-1 rounded backdrop-blur-sm flex items-center">
+                      <Globe className="h-3 w-3 mr-1" />
+                      {college.country || (college.location === 'India' ? 'India' : 'Abroad')}
                     </span>
                   </div>
                 </div>
@@ -191,15 +194,17 @@ const CollegeList = () => {
                 <div className="p-6 flex-grow flex flex-col">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-bold text-gray-900 line-clamp-2">{college.name}</h3>
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                      Rank #{college.ranking}
-                    </span>
+                    {college.ranking && (
+                      <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                        Rank #{college.ranking}
+                      </span>
+                    )}
                   </div>
                   
                   <div className="space-y-3 mb-6 flex-grow">
                     <div className="flex items-center text-gray-600 text-sm">
                       <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                      {college.region}
+                      {college.region || college.country || 'Location not specified'}
                     </div>
                     <div className="flex items-center text-gray-600 text-sm">
                       <BookOpen className="h-4 w-4 mr-2 text-gray-400" />
@@ -211,12 +216,14 @@ const CollegeList = () => {
                                 {college.courses.length > 3 && '...'}
                               </>
                             ) 
-                          : 'Courses not listed'}
+                          : 'Courses information available on request'}
                       </span>
                     </div>
                     <div className="flex items-center text-gray-600 text-sm">
                       <IndianRupee className="h-4 w-4 mr-2 text-gray-400" />
-                      {college.fees ? college.fees.toLocaleString() : 'N/A'}/year
+                      {college.fees 
+                        ? `${college.fees.toLocaleString()}/year` 
+                        : (college.details?.tuitionFees ? `${college.details.tuitionFees}/year` : 'Fees not specified')}
                     </div>
                   </div>
 
